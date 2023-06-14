@@ -8,6 +8,7 @@
 
 .todo__box {
   border-radius: 3rem;
+  box-shadow: 1rem 1rem var(--clr-dark);
   padding: 2rem;
   background: var(--clr-light);
   width: 50rem;
@@ -49,6 +50,18 @@
 
 .todo__submit:hover {
   background-color: var(--clr-red);
+}
+
+.todo__items {
+  list-style: none;
+  margin-top: 2rem;
+  font-size: var(--size-3xl);
+}
+
+.todo__items li {
+  margin-top: 1rem;
+  margin-left: 2rem;
+  font-size: var(--size-4xl);
 }
 
 /* xs */

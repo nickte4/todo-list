@@ -12,17 +12,18 @@
   </head>
   <body>
     <div class="todo container">
-      <div class="todo__box">
+      <div class="todo__box" id="todo__box">
         <h1 class="todo__label">To-Do List 📃</h1>
-        <form class="todo__form" action="post">
+        <form class="todo__form" id="todo__form">
           <input
             class="todo__input"
             type="text"
-            id="task"
+            id="todo__task"
             placeholder="Write task here..."
           />
           <input class="todo__submit" type="submit" value="Add" />
         </form>
+        <ul class="todo__items" id="todo__items"></ul>
       </div>
     </div>
     <script type="module" src="./src/main.js"></script>
