@@ -11,7 +11,20 @@
     <title>Todo-List</title>
   </head>
   <body>
+    <div class="todo container">
+      <div class="todo__box">
+        <h1 class="todo__label">To-Do List 📃</h1>
+        <form class="todo__form" action="post">
+          <input
+            class="todo__input"
+            type="text"
+            id="task"
+            placeholder="Write task here..."
+          />
+          <input class="todo__submit" type="submit" value="Add" />
+        </form>
+      </div>
+    </div>
     <script type="module" src="./src/main.js"></script>
-    <h1>Hello World!</h1>
   </body>
 </html>
