@@ -8,6 +8,16 @@ let ul = document.getElementById("todo__items");
 let listHeight = 20;
 let listChange = 3.5;
 
+function createCheckButton(li, input) {
+  let checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.className = "todo__checkbox";
+  li.appendChild(checkbox);
+  let text = document.createElement("label");
+  text.appendChild(document.createTextNode(input.value));
+  li.appendChild(text);
+}
+
 // changes the list height depending on if an item is added or deleted
 function changeListHeight() {
   let todo_box = document.getElementById("todo__box");
@@ -18,7 +28,7 @@ function changeListHeight() {
 // creates the actual list item in ul tag
 function createListElement(input) {
   let li = document.createElement("li");
-  li.appendChild(document.createTextNode(input.value));
+  createCheckButton(li, input);
   ul.appendChild(li);
   changeListHeight();
 }

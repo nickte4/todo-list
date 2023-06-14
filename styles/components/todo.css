@@ -64,6 +64,27 @@
   font-size: var(--size-4xl);
 }
 
+.todo__checkbox {
+  appearance: none;
+  background-color: #fff;
+  margin: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0.15rem solid var(--clr-dark);
+  margin-right: 1rem;
+  border-radius: 50%;
+  transform: translateY(0.2em);
+}
+
+.todo__checkbox:checked {
+  background-color: var(--clr-red);
+}
+
+.todo__checkbox:checked + label {
+  text-decoration: line-through;
+  text-decoration-thickness: 0.2rem;
+}
+
 /* xs */
 /* @media (min-width: 475px) {} */
 
