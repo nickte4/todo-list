@@ -3,26 +3,34 @@ import "../styles/style.css";
 import "../styles/components/todo.css";
 import "../styles/utils.css";
 
-let form = document.getElementById("todo__form");
-let ul = document.getElementById("todo__items");
+const form = document.getElementById("todo__form");
+const ul = document.getElementById("todo__items");
 let listHeight = 20;
-let listChange = 3.5;
+const listChange = 3.5;
 
+// creates a delete button to right of list item;
 function createDelButton(li) {
   let del = document.createElement("button");
   del.className = "todo__del";
   let icon = document.createElement("i");
   icon.className = "fa-solid fa-x";
   del.appendChild(icon);
+  // listen for delete click
+  del.addEventListener("click", () => {
+    li.remove();
+    decrementListHeight();
+  });
   li.appendChild(del);
 }
 
+// creates text for list item
 function createTextItem(li, input) {
   let text = document.createElement("label");
   text.appendChild(document.createTextNode(input.value));
   li.appendChild(text);
 }
 
+// creates a bubble to check off for list item
 function createCheckButton(li, input) {
   let checkbox = document.createElement("input");
   checkbox.type = "checkbox";
@@ -32,10 +40,17 @@ function createCheckButton(li, input) {
   createDelButton(li);
 }
 
-// changes the list height depending on if an item is added or deleted
-function changeListHeight() {
+// increments the list height depending on if an item is added or deleted
+function incrementListHeight() {
   let todo_box = document.getElementById("todo__box");
   listHeight += listChange;
+  todo_box.style.height = listHeight + "rem";
+}
+
+// decrements the list height depending on if an item is added or deleted
+function decrementListHeight() {
+  let todo_box = document.getElementById("todo__box");
+  listHeight -= listChange;
   todo_box.style.height = listHeight + "rem";
 }
 
@@ -44,7 +59,7 @@ function createListElement(input) {
   let li = document.createElement("li");
   createCheckButton(li, input);
   ul.appendChild(li);
-  changeListHeight();
+  incrementListHeight();
 }
 
 // adds the list if input is non-empty
@@ -53,9 +68,6 @@ function addListAfterClick(input) {
     createListElement(input);
   }
 }
-
-// listen for check-offs
-for (let i = 0; i < ul.childNodes.length; i++) {}
 
 // listens for the actual 'add' button press
 form.addEventListener("submit", function (event) {

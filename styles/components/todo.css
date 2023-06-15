@@ -103,6 +103,10 @@
   cursor: pointer;
 }
 
+.todo__del:hover {
+  color: var(--clr-dark);
+}
+
 /* xs */
 /* @media (min-width: 475px) {} */
 
