@@ -8,14 +8,28 @@ let ul = document.getElementById("todo__items");
 let listHeight = 20;
 let listChange = 3.5;
 
+function createDelButton(li) {
+  let del = document.createElement("button");
+  del.className = "todo__del";
+  let icon = document.createElement("i");
+  icon.className = "fa-solid fa-x";
+  del.appendChild(icon);
+  li.appendChild(del);
+}
+
+function createTextItem(li, input) {
+  let text = document.createElement("label");
+  text.appendChild(document.createTextNode(input.value));
+  li.appendChild(text);
+}
+
 function createCheckButton(li, input) {
   let checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.className = "todo__checkbox";
   li.appendChild(checkbox);
-  let text = document.createElement("label");
-  text.appendChild(document.createTextNode(input.value));
-  li.appendChild(text);
+  createTextItem(li, input);
+  createDelButton(li);
 }
 
 // changes the list height depending on if an item is added or deleted
