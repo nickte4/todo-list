@@ -5,65 +5,78 @@ import "../styles/utils.css";
 
 const form = document.getElementById("todo__form");
 const listChange = 3.5;
-setCurrHeight();
+let currListHeight = 20;
 retrieveListItems();
 
-function setNumItems(numItems) {
-  window.localStorage.setItem("numItems", numItems);
+function setItemId(itemId) {
+  window.localStorage.setItem("itemId", itemId);
 }
 
-function getNumItems() {
-  if (!window.localStorage.getItem("numItems")) {
-    window.localStorage.setItem("numItems", "0");
+function getItemId() {
+  if (!Number(window.localStorage.getItem("itemId"))) {
+    window.localStorage.setItem("itemId", "0");
   }
-  return parseInt(window.localStorage.getItem("numItems"));
+  return parseInt(window.localStorage.getItem("itemId"));
 }
 
+// returns the map from local storage
+function getItemMapFromStorage() {
+  if (!window.localStorage.getItem("itemMap")) {
+    setItemMapFromStorage(new Map());
+  }
+  let mapObj = JSON.parse(window.localStorage.getItem("itemMap"));
+  return new Map(Object.entries(mapObj));
+}
+
+function setItemMapFromStorage(itemMap) {
+  let mapObj = Object.fromEntries(itemMap);
+  window.localStorage.setItem("itemMap", JSON.stringify(mapObj));
+}
+
+// add item to map in local storage
+function addItemToStorage(id, text) {
+  let itemMap = getItemMapFromStorage();
+  itemMap.set(id, text);
+  setItemMapFromStorage(itemMap);
+}
+
+// remove item from map in local storage
+function removeItemFromStorage(id) {
+  let itemMap = getItemMapFromStorage();
+  itemMap.delete(id);
+  setItemMapFromStorage(itemMap);
+}
+
+// retrieves all list items stored in local storage
 function retrieveListItems() {
-  let numItems = getNumItems();
-  for (let i = 0; i < numItems; i++) {
-    createListElement(JSON.parse(window.localStorage.getItem(i)));
+  let itemMap = getItemMapFromStorage();
+  for (let [key, val] of itemMap) {
+    let listItem = {
+      key: key,
+      value: val,
+    };
+    createListElement(listItem, true);
   }
-}
-
-function getListHeight() {
-  let listHeight = parseFloat(window.localStorage.getItem("listHeight"));
-  return listHeight;
-}
-
-function setCurrHeight() {
-  if (!window.localStorage.getItem("listHeight")) {
-    window.localStorage.setItem("listHeight", "20");
-  }
-  let listHeight = window.localStorage.getItem("listHeight");
-  let todo_box = document.getElementById("todo__box");
-  todo_box.style.height = "20rem";
-  todo_box.style.height = listHeight + "rem";
 }
 
 function storeListItem(li) {
   let text = li.getElementsByTagName("label")[0].textContent;
-  let textObj = {
-    value: text,
-  };
-  let numItems = getNumItems();
-  window.localStorage.setItem(numItems, JSON.stringify(textObj));
+  let itemId = getItemId();
+  addItemToStorage(itemId, text);
 }
 
 // increments the list height depending on if an item is added or deleted
 function incrementListHeight() {
   let todo_box = document.getElementById("todo__box");
-  let listHeight = getListHeight() + listChange;
-  todo_box.style.height = listHeight + "rem";
-  window.localStorage.setItem("listHeight", listHeight);
+  currListHeight = currListHeight + listChange;
+  todo_box.style.height = currListHeight + "rem";
 }
 
 // decrements the list height depending on if an item is added or deleted
 function decrementListHeight() {
   let todo_box = document.getElementById("todo__box");
-  let listHeight = getListHeight() - listChange;
-  todo_box.style.height = listHeight + "rem";
-  window.localStorage.setItem("listHeight", listHeight);
+  currListHeight = currListHeight - listChange;
+  todo_box.style.height = currListHeight + "rem";
 }
 
 // creates the bubble to check off item
@@ -71,14 +84,41 @@ function createCheckButton(li) {
   let checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.className = "todo__checkbox";
+  /* 
+  ! REMEMBER TO PASS IN input AND stored
+  if (stored) {
+    itemMap = getItemMapFromStorage();
+    checkbox.checked = itemMap.get(input.key).isChecked;
+  }
+  */
+  checkbox.addEventListener("change", (event) => {
+    if (event.target.checked) {
+      console.log("checked!");
+      // TODO: updateCheckStatus(input.key, true)
+      // ! refactor idea: Convert the value in itemMap to an object
+      // ! that holds a str label (list.label) and
+      // ! boolean check status (list.isChecked).
+      // ! In updateCheckStatus, set
+      // ! list.isChecked = true when checked
+      // ! set it to false when unchecked
+    } else {
+      console.log("unchecked!");
+      // TODO: updateCheckStatus(input.key, false);
+    }
+  });
   li.appendChild(checkbox);
 }
 
 // creates a delete button to right of list item;
-function createDelButton(li) {
+function createDelButton(li, input, stored) {
   // create del tag
   let del = document.createElement("button");
   del.className = "todo__del";
+  if (stored) {
+    del.id = input.key;
+  } else {
+    del.id = getItemId();
+  }
   // create icon tag
   let icon = document.createElement("i");
   icon.className = "fa-solid fa-x";
@@ -86,6 +126,7 @@ function createDelButton(li) {
   // listen for delete click
   del.addEventListener("click", () => {
     li.remove();
+    removeItemFromStorage(del.id);
     decrementListHeight();
   });
   li.appendChild(del);
@@ -99,19 +140,21 @@ function createTextItem(li, input) {
 }
 
 // creates the list item
-function createListItem(li, input) {
+function createListItem(li, input, stored) {
   createCheckButton(li);
   createTextItem(li, input);
-  createDelButton(li);
-  storeListItem(li);
-  setNumItems(getNumItems() + 1);
+  createDelButton(li, input, stored);
+  if (!stored) {
+    storeListItem(li);
+    setItemId(getItemId() + 1);
+  }
 }
 
 // creates the actual list item in ul tag
-function createListElement(input) {
+function createListElement(input, stored) {
   let li = document.createElement("li");
   const ul = document.getElementById("todo__items");
-  createListItem(li, input);
+  createListItem(li, input, stored);
   ul.appendChild(li);
   incrementListHeight();
 }
@@ -119,7 +162,7 @@ function createListElement(input) {
 // adds the list if input is non-empty
 function addListAfterClick(input) {
   if (input.value.length > 0) {
-    createListElement(input);
+    createListElement(input, false);
   }
 }
 
