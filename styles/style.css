@@ -1,9 +1,10 @@
 :root {
-  --clr-background: radial-gradient(
+  /* --clr-background: radial-gradient(
     circle,
     rgba(91, 63, 255, 1) 0%,
     rgba(140, 0, 250, 1) 100%
-  );
+  ); */
+  --clr-background: #fecdd3;
 
   /* colors */
   --clr-light: #f8fafc;
@@ -52,4 +53,14 @@ svg {
   display: block;
   max-width: 100%;
   user-select: none;
+}
+
+img {
+  margin: 0 auto;
+  width: 25rem;
+  height: 25rem;
+}
+
+.gudetama {
+  margin-top: 8rem;
 }

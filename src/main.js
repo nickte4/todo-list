@@ -4,7 +4,7 @@ import "../styles/components/todo.css";
 import "../styles/utils.css";
 
 const form = document.getElementById("todo__form");
-const listChange = 3.5;
+const listChange = 3.7;
 let currListHeight = 20;
 retrieveListItems();
 
@@ -63,8 +63,8 @@ function retrieveListItems() {
   }
 }
 
-function storeListItem(li) {
-  let text = li.getElementsByTagName("label")[0].textContent;
+function storeListItem(input) {
+  let text = input.value;
   let itemId = getItemId();
   addItemToStorage(itemId, text);
 }
@@ -86,7 +86,7 @@ function decrementListHeight() {
 // updates check status of a list item
 function updateCheckStatus(itemKey, isChecked) {
   let itemMap = getItemMapFromStorage();
-  let item = itemMap.get(itemKey);
+  let item = itemMap.get(itemKey.toString());
   item.isChecked = isChecked;
   itemMap.set(itemKey, item);
   setItemMapFromStorage(itemMap);
@@ -155,13 +155,11 @@ function createTextItem(li, input, stored) {
 
 // creates the list item
 function createListItem(li, input, stored) {
+  if (!stored) storeListItem(input);
   createCheckButton(li, input, stored);
   createTextItem(li, input, stored);
   createDelButton(li, input, stored);
-  if (!stored) {
-    storeListItem(li);
-    setItemId(getItemId() + 1);
-  }
+  if (!stored) setItemId(getItemId() + 1);
 }
 
 // creates the actual list item in ul tag
