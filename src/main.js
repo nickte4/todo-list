@@ -36,7 +36,11 @@ function setItemMapFromStorage(itemMap) {
 // add item to map in local storage
 function addItemToStorage(id, text) {
   let itemMap = getItemMapFromStorage();
-  itemMap.set(id, text);
+  let listObj = {
+    content: text,
+    isChecked: false,
+  };
+  itemMap.set(id, listObj);
   setItemMapFromStorage(itemMap);
 }
 
@@ -79,22 +83,29 @@ function decrementListHeight() {
   todo_box.style.height = currListHeight + "rem";
 }
 
+// updates check status of a list item
+function updateCheckStatus(listObj, isChecked) {
+  let itemMap = getItemMapFromStorage();
+  let item = itemMap.get(listObj);
+  item.isChecked = isChecked;
+}
+
 // creates the bubble to check off item
-function createCheckButton(li) {
+function createCheckButton(li, input, stored) {
   let checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.className = "todo__checkbox";
-  /* 
-  ! REMEMBER TO PASS IN input AND stored
+
+  // set checkbox to status in its prior state
   if (stored) {
-    itemMap = getItemMapFromStorage();
+    let itemMap = getItemMapFromStorage();
     checkbox.checked = itemMap.get(input.key).isChecked;
   }
-  */
+
   checkbox.addEventListener("change", (event) => {
     if (event.target.checked) {
       console.log("checked!");
-      // TODO: updateCheckStatus(input.key, true)
+      updateCheckStatus(input.key, true);
       // ! refactor idea: Convert the value in itemMap to an object
       // ! that holds a str label (list.label) and
       // ! boolean check status (list.isChecked).
@@ -103,7 +114,7 @@ function createCheckButton(li) {
       // ! set it to false when unchecked
     } else {
       console.log("unchecked!");
-      // TODO: updateCheckStatus(input.key, false);
+      updateCheckStatus(input.key, false);
     }
   });
   li.appendChild(checkbox);
@@ -141,7 +152,7 @@ function createTextItem(li, input) {
 
 // creates the list item
 function createListItem(li, input, stored) {
-  createCheckButton(li);
+  createCheckButton(li, input, stored);
   createTextItem(li, input);
   createDelButton(li, input, stored);
   if (!stored) {
