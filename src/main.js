@@ -84,10 +84,12 @@ function decrementListHeight() {
 }
 
 // updates check status of a list item
-function updateCheckStatus(listObj, isChecked) {
+function updateCheckStatus(itemKey, isChecked) {
   let itemMap = getItemMapFromStorage();
-  let item = itemMap.get(listObj);
+  let item = itemMap.get(itemKey);
   item.isChecked = isChecked;
+  itemMap.set(itemKey, item);
+  setItemMapFromStorage(itemMap);
 }
 
 // creates the bubble to check off item
@@ -95,26 +97,23 @@ function createCheckButton(li, input, stored) {
   let checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.className = "todo__checkbox";
-
+  let itemId = null;
   // set checkbox to status in its prior state
   if (stored) {
     let itemMap = getItemMapFromStorage();
-    checkbox.checked = itemMap.get(input.key).isChecked;
+    itemId = input.key;
+    checkbox.checked = itemMap.get(itemId).isChecked;
+  } else {
+    itemId = getItemId();
   }
 
   checkbox.addEventListener("change", (event) => {
     if (event.target.checked) {
       console.log("checked!");
-      updateCheckStatus(input.key, true);
-      // ! refactor idea: Convert the value in itemMap to an object
-      // ! that holds a str label (list.label) and
-      // ! boolean check status (list.isChecked).
-      // ! In updateCheckStatus, set
-      // ! list.isChecked = true when checked
-      // ! set it to false when unchecked
+      updateCheckStatus(itemId, true);
     } else {
       console.log("unchecked!");
-      updateCheckStatus(input.key, false);
+      updateCheckStatus(itemId, false);
     }
   });
   li.appendChild(checkbox);
@@ -144,16 +143,20 @@ function createDelButton(li, input, stored) {
 }
 
 // creates text for list item
-function createTextItem(li, input) {
+function createTextItem(li, input, stored) {
   let text = document.createElement("label");
-  text.appendChild(document.createTextNode(input.value));
+  if (stored) {
+    text.appendChild(document.createTextNode(input.value.content));
+  } else {
+    text.appendChild(document.createTextNode(input.value));
+  }
   li.appendChild(text);
 }
 
 // creates the list item
 function createListItem(li, input, stored) {
   createCheckButton(li, input, stored);
-  createTextItem(li, input);
+  createTextItem(li, input, stored);
   createDelButton(li, input, stored);
   if (!stored) {
     storeListItem(li);
